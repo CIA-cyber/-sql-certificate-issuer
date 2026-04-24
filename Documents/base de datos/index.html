@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Certificados</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        input {
+            padding: 12px;
+            width: 250px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 20px;
+            outline: none;
+        }
+        button {
+            padding: 12px 25px;
+            background: #00d2ff;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background: #3a7bd5; }
+        #mensaje { margin-top: 20px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Emisión de Certificados</h1>
+    <p>Ingresa el nombre completo para generar el PDF</p>
+    <input type="text" id="nombre" placeholder="Ej: Dionisio">
+    <br>
+    <button onclick="descargarCertificado()">Generar y Descargar</button>
+    <div id="mensaje"></div>
+</div>
+
+<script>
+    async function descargarCertificado() {
+        const nombre = document.getElementById('nombre').value;
+        const mensaje = document.getElementById('mensaje');
+        
+        if (!nombre) {
+            mensaje.innerText = "⚠️ Por favor, escribe un nombre.";
+            return;
+        }
+
+        mensaje.innerText = "⏳ Generando certificado...";
+
+        try {
+            const respuesta = await fetch('http://127.0.0.1:8000/crear-certificado', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre_buscar: nombre })
+            });
+
+            if (respuesta.ok) {
+                const blob = await respuesta.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Certificado_${nombre}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                mensaje.innerText = "✅ ¡Descargado con éxito!";
+            } else {
+                mensaje.innerText = "❌ No se encontró el registro.";
+            }
+        } catch (error) {
+            mensaje.innerText = "❌ Error de conexión con el servidor.";
+        }
+    }
+</script>
+
+</body>
+</html>
