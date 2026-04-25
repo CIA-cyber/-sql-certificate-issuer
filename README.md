@@ -1,6 +1,6 @@
 #  SQL Certificate Issuer - FastAPI
 
-An automated system for managing and dynamically generating PDF certificates, developed as part of my Software Engineering studies.
+An automated system for managing and dynamically generating PDF certificates, developed as part of my Computer Engineering studies.
 
 ###  Tech Stack
 * **Backend:** [FastAPI](https://fastapi.tiangolo.com/) (Python) for high-performance API management.
